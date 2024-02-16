@@ -160,4 +160,4 @@ cython_debug/
 .idea/
 
 # data folder
-data_retriever/data/
+data_retriever/data/*
