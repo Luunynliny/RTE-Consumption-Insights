@@ -6,27 +6,21 @@ def get_consolidated_production_type(start_date, end_date):
     url = "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/actual_generations_per_production_type"
     return get_data_rte(url, start_date, end_date)
 
+
 def table_production_type(response):
-    data = response.json()["actual_generations_per_production_type"]
-    df_actual_generations_per_production_type = pd.DataFrame()
-    for element in data:
-        production_type = element["production_type"]
-        df = pd.json_normalize(element['values'], sep='_')[['start_date', 'end_date', 'value']]
-        df.columns = ['start_date', 'end_date', production_type.lower()]
-        df_actual_generations_per_production_type = pd.concat([df_actual_generations_per_production_type,
-                                                            df.loc[
-                                                                :,
-                                                                ~df.columns.isin(
-                                                                    df_actual_generations_per_production_type.columns
-                                                                )
-                                                            ]],
-                                                            axis=1)
-    return df_actual_generations_per_production_type
+    data = response.json()
+    df_production_type = pd.DataFrame()
+    for production_type in data['actual_generations_per_production_type']:
+        df = pd.DataFrame(production_type['values'])
+        df['production_type'] = production_type['production_type']
+        df_production_type = pd.concat([df_production_type, df])
+    return df_production_type
 
 
 def clean_data_production_type(df):
     df["start_date"] = pd.to_datetime(df["start_date"], utc=True)
     df["end_date"] = pd.to_datetime(df["end_date"], utc=True)
+    df = df.rename(columns={'value': 'production_value'})
     return df
 
 
