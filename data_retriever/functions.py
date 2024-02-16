@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 
 def generate_token() -> str:
     
@@ -39,3 +40,14 @@ def get_data_rte(url, start_date, end_date):
     except requests.exceptions.RequestException as e:
         print(f"Error occurred: {e}")
         return None
+
+
+def time_iterator(start_date, end_date, chunk_size=155):
+    # on ne peut pas récupérer plus de 155 jours de données à la fois
+    chunk = pd.Timedelta(chunk_size, "D")
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    while start_date + chunk < end_date:
+        yield start_date, start_date + chunk
+        start_date += chunk
+    yield start_date, end_date
