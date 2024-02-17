@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 
+
 def generate_token() -> str:
     
     url = "https://digital.iservices.rte-france.com/token/oauth"
@@ -14,22 +15,34 @@ def generate_token() -> str:
 
     return response.json()["access_token"]
 
-def get_data_rte(url, start_date, end_date):
-    """
-    Retrieves data from the specified URL within the given date range using the provided API token.
 
-    Args:
-        url (str): The URL to retrieve data from.
-        start_date (str): The start date of the data range in the format 'YYYY-MM-DD'.
-        end_date (str): The end date of the data range in the format 'YYYY-MM-DD'.
+# def get_data_rte(url, start_date, end_date):
+    
+#     querystring = {"start_date":f"{start_date}","end_date":f"{end_date}"}
+#     headers = {"Authorization": f"Bearer {generate_token()}"}
 
-    Returns:
-        requests.Response: The response object containing the retrieved data.
+#     try:
+#         response = requests.request("GET", url, headers=headers, params=querystring)
+#         response.raise_for_status()  # Raise an exception if the response status code is not successful
+#         return response
+#     except requests.exceptions.RequestException as e:
+#         print(f"Error occurred: {e}")
+#         return None
+    
+    
+def get_api_response(start_date, end_date, route):
+    
+    routes = {
+        "production": "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/actual_generations_per_production_type",
+        "consumption": "https://digital.iservices.rte-france.com/open_api/consolidated_consumption/v1/consolidated_power_consumption",
+        "forecast": "https://digital.iservices.rte-france.com/open_api/consumption/v1/weekly_forecasts"
+    }
 
-    Raises:
-        requests.exceptions.RequestException: If an error occurs during the request.
+    if route not in routes:
+        raise ValueError("Invalid route")
 
-    """
+    url = routes[route]
+    
     querystring = {"start_date":f"{start_date}","end_date":f"{end_date}"}
     headers = {"Authorization": f"Bearer {generate_token()}"}
 
