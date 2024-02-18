@@ -14,22 +14,18 @@ def etl():
     df_p = production.get_production_data(start_date, end_date)
     df_f = forecast.get_forecast_data(start_date, end_date)
 
-    return df_c, df_p, df_f
+    engine = create_engine(
+        "mysql+pymysql://{}:{}@{}:{}/{}"
+        .format(SECRET["AWS_RDS_USERNAME"],
+                SECRET["AWS_RDS_PASSWORD"],
+                SECRET["AWS_RDS_HOST"],
+                SECRET["AWS_RDS_PORT"],
+                SECRET["AWS_RDS_DATABASE"]))
 
-    # engine = create_engine(
-    #     "mysql+pymysql://{}:{}@{}:{}/{}"
-    #     .format(SECRET["AWS_RDS_USERNAME"],
-    #             SECRET["AWS_RDS_PASSWORD"],
-    #             SECRET["AWS_RDS_HOST"],
-    #             SECRET["AWS_RDS_PORT"],
-    #             SECRET["AWS_RDS_DATABASE"]))
-    #
-    # df_c.to_sql('consumption', con=engine, if_exists='append', chunksize=1000)
+    df_c.to_sql('consumption', con=engine, if_exists='append', chunksize=1000)
+    df_p.to_sql('production', con=engine, if_exists='append', chunksize=1000)
+    df_f.to_sql('forecast', con=engine, if_exists='append', chunksize=1000)
 
 
 if __name__ == "__main__":
-    c, p, f = etl()
-
-    print(c.head())
-    print(p.head())
-    print(f.head())
+    etl()
