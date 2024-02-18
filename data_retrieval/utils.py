@@ -48,7 +48,7 @@ def get_rte_api_response(route: str, start_date: str, end_date: str) -> requests
         return None
 
 
-def dates_period_iterator(start_date: str, end_date: str, day_span: int = 155) -> tuple[str, str]:
+def dates_period_iterator(start_date: str, end_date: str, day_span: int) -> tuple[str, str]:
     """
     Returns a serie of start and end dates dividing a period between two dates for a given day span.
 
@@ -67,10 +67,10 @@ def dates_period_iterator(start_date: str, end_date: str, day_span: int = 155) -
     end_date = pd.to_datetime(end_date)
 
     while start_date + chunk < end_date:
-        yield format_date(start_date), format_date(start_date + chunk)
+        yield start_date, start_date + chunk
         start_date += chunk
 
-    yield format_date(start_date), format_date(end_date)
+    yield start_date, end_date
 
 
 def format_date(date: pd.Timestamp) -> str:

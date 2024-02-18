@@ -52,6 +52,8 @@ class RTEConsumption:
     @staticmethod
     def get_consumption_data(start_date: str, end_date: str) -> pd.DataFrame:
         """
+        Get the power consumption data from the RTE.
+
         :param start_date: a date string in ISO 8601 format YYYY-MM-DDTHH:MM:SS±hh:mm.
         :type start_date: str
         :param end_date: a date string in ISO 8601 format YYYY-MM-DDTHH:MM:SS±hh:mm.
