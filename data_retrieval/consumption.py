@@ -1,57 +1,74 @@
-from functions import get_api_response, time_iterator
 import pandas as pd
-import os
+import requests
+
+from utils import get_rte_api_response, dates_period_iterator, format_date
 
 
-def consumption_response_to_df(response):
-    data_json = response.json()
-    return pd.DataFrame(data_json['consolidated_power_consumption'][0]['values'])
+class RTEConsumption:
+    ROUTE: str = ("https://digital.iservices.rte-france.com/open_api/consolidated_consumption/v1"
+                  "/consolidated_power_consumption")
+    DAYS_LIMIT: int = 155
 
+    @staticmethod
+    def __consumption_response_to_df(response: requests.Response) -> pd.DataFrame:
+        """
+        Convert RTE API response to pandas dataframe.
 
-def clean_consumption_data(df):
-    
-    date_columns = ['start_date', 'end_date', 'updated_date']
-    df[date_columns] = df[date_columns].apply(pd.to_datetime, utc=True)
-    
-    column_mapping = {
-        'value': 'consumption_value',
-        'start_date': 'consumption_start_date',
-        'end_date': 'consumption_end_date',
-        'updated_date': 'consumption_updated_date',
-        'status': 'consumption_status'
-    }
-    df = df.rename(columns=column_mapping)
-    
-    consumption_primary_key = ['consumption_start_date']
-    df_clean = df.drop_duplicates(consumption_primary_key)
-    
-    return df_clean
-    
+        :param response: a response from the RTE API.
+        :type response: requests.Response
+        :return: the resposne data formatted as a dataframe.
+        :rtype: pd.DataFrame
+        """
+        data_json = response.json()
+        return pd.DataFrame(data_json['consolidated_power_consumption'][0]['values'])
 
-def get_consumption_data(start_date, end_date):
-    
-    # get the data from the API and convert it to a table, but we can only get 155 days at a time
-    dfs = []
-    for start, end in time_iterator(start_date, end_date):        
-        response_consumption = get_api_response(str(start).replace(" ", "T"), str(end).replace(" ", "T"), "consumption")        
-        df = consumption_response_to_df(response_consumption)
-        dfs.append(df)
-    df_concat = pd.concat(dfs, ignore_index=True)
+    @staticmethod
+    def __clean_consumption_data(df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Clean the response dataframe.
 
-    # clean the data
-    df_consumption = clean_consumption_data(df_concat)
-    
-    return df_consumption
+        :param df: a pandas dataframe.
+        :type df: pd.Dataframe
+        :return: the cleaned pandas dataframe.
+        :rtype: pd.DataFrame
+        """
+        date_columns = ['start_date', 'end_date', 'updated_date']
+        df[date_columns] = df[date_columns].apply(pd.to_datetime, utc=True)
 
+        column_mapping = {
+            'value': 'consumption_value',
+            'start_date': 'consumption_start_date',
+            'end_date': 'consumption_end_date',
+            'updated_date': 'consumption_updated_date',
+            'status': 'consumption_status'
+        }
+        df = df.rename(columns=column_mapping)
 
-if __name__ == "__main__":
-    
-    start_date = "2019-01-01T00:00:00+01:00"
-    end_date = "2020-01-01T00:00:00+01:00"
-    
-    df_consumption = get_consumption_data(start_date, end_date)
+        consumption_primary_key = ['consumption_start_date']
+        df_clean = df.drop_duplicates(consumption_primary_key)
 
-    # Save the dataframe to a csv file for testing purposes
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_directory, 'data/consumption_test.csv')
-    df_consumption.to_csv(file_path, mode='w', index=False)
+        return df_clean
+
+    @staticmethod
+    def get_consumption_data(start_date: str, end_date: str) -> pd.DataFrame:
+        """
+        :param start_date: a date string in ISO 8601 format YYYY-MM-DDTHH:MM:SS±hh:mm.
+        :type start_date: str
+        :param end_date: a date string in ISO 8601 format YYYY-MM-DDTHH:MM:SS±hh:mm.
+        :type end_date: str
+        :return: a pandas dataframe of the RTE consumption data between two dates.
+        :rtype: pd.DataFrame
+        """
+        dfs = []
+
+        for start, end in dates_period_iterator(start_date, end_date, day_span=RTEConsumption.DAYS_LIMIT):
+            response_consumption = get_rte_api_response(RTEConsumption.ROUTE, start_date=format_date(start),
+                                                        end_date=format_date(end))
+
+            df = RTEConsumption.__consumption_response_to_df(response_consumption)
+            dfs.append(df)
+
+        df_concat = pd.concat(dfs, ignore_index=True)
+        df_consumption = RTEConsumption.__clean_consumption_data(df_concat)
+
+        return df_consumption
