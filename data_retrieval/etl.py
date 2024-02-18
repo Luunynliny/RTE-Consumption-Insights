@@ -1,8 +1,7 @@
 from dotenv import dotenv_values
 from sqlalchemy import create_engine
-from consumption import RTEConsumption
-from production import RTEProduction
-from forecast import RTEForecast
+
+from rte_data import consumption, production, forecast
 
 SECRET = dotenv_values(".env")
 
@@ -11,11 +10,11 @@ def etl():
     start_date = "2023-01-01T00:00:00+01:00"
     end_date = "2023-01-10T00:00:00+01:00"
 
-    # df_c = RTEConsumption.get_consumption_data(start_date, end_date)
-    # df_p = RTEProduction.get_production_data(start_date, end_date)
-    df_f = RTEForecast.get_forecast_data(start_date, end_date)
+    df_c = consumption.get_consumption_data(start_date, end_date)
+    df_p = production.get_production_data(start_date, end_date)
+    df_f = forecast.get_forecast_data(start_date, end_date)
 
-    return df_f
+    return df_c, df_p, df_f
 
     # engine = create_engine(
     #     "mysql+pymysql://{}:{}@{}:{}/{}"
@@ -29,5 +28,8 @@ def etl():
 
 
 if __name__ == "__main__":
-    d = etl()
-    print(d.head())
+    c, p, f = etl()
+
+    print(c.head())
+    print(p.head())
+    print(f.head())
