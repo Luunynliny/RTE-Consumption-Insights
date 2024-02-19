@@ -24,10 +24,6 @@
 
 <p align="right"><a href="#top"><i>back to top</i></a></p>
 
-<!-- ROADMAP -->
-
-<p align="right"><a href="#top"><i>back to top</i></a></p>
-
 ## License
 
 Distributed under the Creative Commons Zero v1.0 Universal License. See `LICENSE`for more information.
@@ -37,5 +33,11 @@ Distributed under the Creative Commons Zero v1.0 Universal License. See `LICENSE
 <!-- RESOURCES -->
 
 ## Resources
+
+RTE. (n.d.-a). Actual Generation. Catalogue API - API data RTE. https://data.rte-france.com/catalog/-/api/generation/Actual-Generation/v1.1
+
+RTE. (n.d.-b). Consolidated Consumption. Catalogue API - API data RTE. https://data.rte-france.com/catalog/-/api/consumption/Consolidated-Consumption/v1.0
+
+RTE. (n.d.-c). Consumption. Catalogue API - API data RTE. https://data.rte-france.com/catalog/-/api/consumption/Consumption/v1.2 
 
 <p align="right"><a href="#top"><i>back to top</i></a></p>
