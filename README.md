@@ -22,6 +22,60 @@
 
 ## About
 
+This project objective is to provide a cloud-based solution for the retrieving and visualization of daily data regarding France energy generation and consumption.
+Using 3 API endpoints from the Réseau de Transport d'Énergie :
+- `actual_generation_per_production_type resource`
+- `weekly_forecast`
+- `consolidated_power_consumption`
+
+we were able to provide meaningful insights on France energy production distribution, consumption forecast and many more.
+
+### Architecture
+
+<p align="center">
+  <img src="imgs/architecture.png">
+</p>
+
+### Insights
+
+#### Power production
+
+<p align="center">
+  <img src="imgs/pp_distribution.png">
+</p>
+
+<p align="center">
+  <img src="imgs/pp_timeline.png">
+</p>
+
+<p align="center">
+  <img src="imgs/pp_month.png">
+</p>
+
+#### Power consumption
+
+<p align="center">
+  <img src="imgs/pc_timeline.png">
+</p>
+
+<p align="center">
+  <img src="imgs/pc_month.png">
+</p>
+
+#### Forecasting
+
+<p align="center">
+  <img src="imgs/f_timeline.png">
+</p>
+
+<p align="center">
+  <img src="imgs/f_days_difference.png">
+</p>
+
+<p align="center">
+  <img src="imgs/f_difference.png">
+</p>
+
 <p align="right"><a href="#top"><i>back to top</i></a></p>
 
 ## License
