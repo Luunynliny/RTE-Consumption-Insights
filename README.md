@@ -22,7 +22,7 @@
 
 ## About
 
-This project objective is to provide a cloud-based solution for the retrieving and visualization of daily data regarding France energy generation and consumption.
+This project goal is to provide a cloud-based solution for the retrieving and visualization of daily data regarding France energy generation and consumption.
 Using 3 API endpoints from the Réseau de Transport d'Énergie :
 - `actual_generation_per_production_type resource`
 - `weekly_forecast`
